@@ -3,5 +3,3 @@ export const AppConstants = {
     REGION: "us",
     AUTH_KEY: "45e85305a2b32155ac81ebea265777accf2a8de9",
   };
-  
-  
