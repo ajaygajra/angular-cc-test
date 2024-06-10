@@ -22,30 +22,51 @@ const uiKitSettings = new UIKitSettingsBuilder()
 CometChatUIKit.init(uiKitSettings)!.then(() => {
 
   const authToken = "AUTH_TOKEN"; //Replace with your auth token
-
+  const urlParams = new URLSearchParams(window.location.search);
+  const uid = urlParams.get('uid');
 
   CometChatUIKit!.getLoggedinUser()?.then(user => {
     if (!user) {
-  
-  
-      CometChatUIKit.login({ uid: 'superhero1', authToken: AppConstants?.AUTH_KEY })?.then(user => {
-  
+
+
+
+      CometChatUIKit.login({ uid: uid ? uid : 'superhero1', authToken: AppConstants?.AUTH_KEY })?.then(user => {
+
         console.log("Login Successful:", { user });
-        
-  
+
+
         bootstrapApplication(AppComponent,
           { providers: [provideProtractorTestingSupport()] })
           .catch(err => console.error(err));
-      
-      
+
+
       }).catch(console.log);
     } else {
-  
-      bootstrapApplication(AppComponent,
-        { providers: [provideProtractorTestingSupport()] })
-        .catch(err => console.error(err));
-    
+
+      if (uid != user.getUid()) {
+        console.log("Here we are !", { uid, user });
+        CometChatUIKit.logout().then(() => {
+          CometChatUIKit.login({ uid: uid ? uid : 'superhero1', authToken: AppConstants?.AUTH_KEY })?.then(user => {
+
+            console.log("Login Successful i else :", { user });
+
+
+            bootstrapApplication(AppComponent,
+              { providers: [provideProtractorTestingSupport()] })
+              .catch(err => console.error(err));
+
+
+          }).catch(console.log);
+        })
       }
+      else {
+
+        bootstrapApplication(AppComponent,
+          { providers: [provideProtractorTestingSupport()] })
+          .catch(err => console.error(err));
+
+      }
+    }
   }).catch(console.log);
 
 })
