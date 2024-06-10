@@ -1,9 +1,9 @@
 <div style="max-height: 600px; height: 600px;">
-    <cometchat-users-with-messages></cometchat-users-with-messages> 
+    <cometchat-users-with-messages></cometchat-users-with-messages>
 </div>
 
 <div style="max-height: 600px; height: 600px;">
-    <cometchat-conversations-with-messages></cometchat-conversations-with-messages> 
+    <cometchat-conversations-with-messages></cometchat-conversations-with-messages>
 </div>
 
 
@@ -11,28 +11,26 @@
 
 
 <div style="max-height: 600px; height: 600px;">
-    <cometchat-groups-with-messages></cometchat-groups-with-messages> 
+    <cometchat-groups-with-messages></cometchat-groups-with-messages>
 </div>
 
 
 <ng-template #subtitleView>
-@if (user){
-    <div > The below this is using signal state management which is injected in CometChat-message-header component</div>
+    @if (user){
+    <div> The below this is using signal state management which is injected in
+        CometChat-message-header component</div>
     <app-signal-counter></app-signal-counter>
-    <div > above component is getting rendered after sometime based on new syntax introduce in angular 15 is i f;</div>
-}@else{
-    <div > Loading</div>
-}
+    <div> above component is getting rendered after sometime based on new syntax
+        introduce in angular 15 is i f;</div>
+    }@else{
+    <div> Loading</div>
+    }
 </ng-template>
 
 @if (user){
-<cometchat-message-header
-
-[user]="user"
-[subtitleView]="subtitleView"
-
-></cometchat-message-header>
+<cometchat-message-header [user]="user"
+    [subtitleView]="subtitleView"></cometchat-message-header>
 }
 <!-- <cometchat-details [user]="user">
 </cometchat-details> -->
-
+<cometchat-incoming-call></cometchat-incoming-call>
