@@ -3,6 +3,15 @@
   "version": "0.0.0",
   "description": "Example project from an angular.io guide.",
   "license": "MIT",
+  "assets": [
+    "src/favicon.ico",
+    "src/assets",
+    {
+      "glob": "**/*",
+      "input":  "./node_modules/@cometchat/chat-uikit-angular/assets/",
+      "output": "assets/"
+    }],
+    
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
