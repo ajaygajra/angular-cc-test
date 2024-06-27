@@ -5,7 +5,6 @@ import { SignalStateModule } from './signal-state/signal-state.module';
 
 
 
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -17,7 +16,11 @@ export class AppComponent {
   title = 'homes';
   user: CometChat.User = null as unknown as CometChat.User;
 
-  constructor() {
+  constructor(private themeService:CometChatThemeService) {
+    themeService.theme.palette.setMode("light")
+    themeService.theme.palette.setPrimary({ light: "#0190A3", dark: "#0190A3" })
+    themeService.theme.palette.setSecondary({ light: "#CDE9ED", dark:"#CDE9ED"})
+    themeService.theme.palette.setPrimary({light:'#B39DDB',dark:'#B39DDB'})
     CometChat.getLoggedInUser().then((user: CometChat.User) => {
       setTimeout(() => {
         this.user = user
