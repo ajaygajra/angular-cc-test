@@ -1,0 +1,281 @@
+import { Component, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { CometChat } from '@cometchat/chat-sdk-javascript';
+import {  AvatarStyle, BackdropStyle, BadgeStyle, CometChatThemeService, CometChatUIKit, ConfirmDialogStyle, DateStyle, ListItemStyle, LoaderStyle } from '@cometchat/chat-uikit-angular';
+import {ConversationsStyle, MessagesConfiguration, MessageComposerConfiguration, MessageListConfiguration, ConversationsConfiguration, ContactsConfiguration, MessagesStyle, ContactsStyle} from '@cometchat/uikit-shared';
+import { SelectionMode, DatePatterns, CometChatOption, TitleAlignment } from '@cometchat/uikit-resources';
+import "@cometchat/uikit-elements";
+
+import HashTagTextFormatter from '../HashTagTextFormatter';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit{
+
+  @Input() conversation!: CometChat.Conversation;
+  conversationWith!: CometChat.User | CometChat.Group;
+
+
+  ngOnInit(): void {
+
+
+    // this.conversationWith = this.conversation.getConversationWith();
+
+    CometChat.getUser("superhero3").then((user:CometChat.User)=>{
+      this.userObject=user;
+    });
+
+    CometChat.getGroup("supergroup").then((group:CometChat.Group)=>{
+      this.groupObject=group;
+    })
+  }
+
+
+  
+  formatTime(timestamp: number): string {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleString();
+  }
+
+  getSubtitle(conversation: CometChat.Conversation): string {
+    console.log(conversation)
+    if(conversation) {
+    this.conversationWith = conversation.getConversationWith();
+    if (this.conversationWith instanceof CometChat.User) {
+      const lastActiveAt = this.conversationWith.getLastActiveAt();
+      return `Last Active At: ${this.formatTime(lastActiveAt)}`;
+    } else if (this.conversationWith instanceof CometChat.Group) {
+      const createdAt = this.conversationWith.getCreatedAt();
+      return `Created At: ${this.formatTime(createdAt)}`;
+    } else {
+      return 'Unknown conversation type';
+    }
+  }
+  return 'Unknown conversation type'
+  }
+
+  title = 'Your Custom Title';
+  readIcon='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdh2pJzhFJKkAjaF7ynYtREgGUJnzc0gSJLg&s';
+  
+  hideError=true;
+  hideSeparator=true;
+  disableUsersPresence=true;
+  disableReceipt=true;
+
+  getOptions=(user: any)=>{
+    const customOptions = [
+      new CometChatOption({
+        id: "1",
+        title: "Title",
+        iconURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdh2pJzhFJKkAjaF7ynYtREgGUJnzc0gSJLg&s",
+        backgroundColor: "red",
+        onClick: () => {
+          console.log("Custom option clicked for user:", user);
+        },
+      }),
+    ];
+    return customOptions;
+  };
+
+  // constructor(private themeService:CometChatThemeService) {
+  //   themeService.theme.palette.setMode("light")
+  //   // themeService.theme.palette.setPrimary({ light: "#0190A3", dark: "#0190A3" })
+  //   // themeService.theme.palette.setSecondary({ light: "#CDE9ED", dark:"#CDE9ED"})
+  //   // themeService.theme.palette.setPrimary({light:'#B39DDB',dark:'#B39DDB'})
+  // }
+  
+  @ViewChild('buttonTemplate') buttonTemplate!: TemplateRef<any>;
+  @ViewChild('subtitleTemplate', { static: true }) subtitleTemplate!: TemplateRef<any>;
+  @ViewChild('errorStateView', { static: true }) errorStateView!: TemplateRef<any>;
+
+
+  ngAfterViewInit(): void {
+    // This is just to show you have access to the template
+    // You may not need to do anything here
+    console.log(this.buttonTemplate);
+  }
+
+  handleReload(): void {
+    window.location.reload();
+  }
+
+  getButtonStyle() {
+    return {
+      height: '20px',
+      width: '20px',
+      border: 'none',
+      borderRadius: '0',
+      background: 'transparent'
+    };
+  }
+
+   getLoaderStyle: LoaderStyle = new LoaderStyle({
+    iconTint: "red",
+    background: "transparent",
+    height: "20px",
+    width: "20px",
+    border: "none",
+    borderRadius: "0",
+  });
+
+  getButtonIconStyle() {
+    return {
+      color: '#7E57C2'
+    };
+  }
+  public handleOnItemClick = (conversations: CometChat.Conversation) =>{
+    console.log("your custom on item click action", conversations);
+  };
+
+  public handleOnSelect = (conversations: CometChat.Conversation, selected: boolean): void=>{
+    console.log("Custom on select action", conversations, selected); 
+  };
+
+
+  public handleOnError = (error: CometChat.CometChatException) => {
+    console.log("your custom on error action", error);
+  }
+
+  public conversationsStyle:ConversationsStyle = new ConversationsStyle({
+    width:'100%',
+    height:'100%',
+    border:'1px solid #ee7752',
+    background:'linear-gradient(#ee7752, #e73c7e, #23a6d5, #23d5ab)'
+  });
+
+
+  public selectionMode : SelectionMode = SelectionMode.multiple;
+  public datePattern: DatePatterns = DatePatterns.DateTime;
+  public handleOnClose = () =>{
+    console.log("Your custom on close actions");
+  }
+  public textFormatters= [new HashTagTextFormatter];
+  public messagesConfiguration = new MessagesConfiguration({
+    disableTyping:true,
+    hideMessageHeader:true,
+    messagesStyle: new MessagesStyle({
+      background:'green',
+      border:'2px solid red',
+      borderRadius:'12px',
+      height:'600px'
+    }),
+    // messageListConfiguration: new MessageListConfiguration({
+    //   textFormatters: [new HashTagTextFormatter]
+    // }),
+    // messageComposerConfiguration: new MessageComposerConfiguration({
+    //   textFormatters: [new HashTagTextFormatter]
+    // })
+  });
+
+  public userObject!: CometChat.User;
+
+  public groupObject!: CometChat.Group;
+
+  
+
+  public conversationsConfigurations = new ConversationsConfiguration({
+    // titleAlignment: TitleAlignment.center,
+    // hideError:true
+    // textFormatters: [new HashTagTextFormatter],
+    conversationsStyle: new ConversationsStyle({
+      width: "100%",
+      height: "100%",
+      border: "1px solid #ee7752",
+      background: "linear-gradient(#ee7752, #e73c7e, #23a6d5, #23d5ab)",
+    }),
+    conversationsRequestBuilder: new CometChat.ConversationsRequestBuilder().setConversationType('user').setLimit(5),
+    // onError:this.handleOnError,
+    // onItemClick:this.handleOnItemClick,
+    // conversationsStyle:this.conversationsStyle,
+    // errorStateView: this.errorStateView,
+    // subtitleView:this.subtitleTemplate
+  });
+  public startConversationConfiguration = new ContactsConfiguration({
+    onClose: this.handleOnClose,
+    contactsStyle: new ContactsStyle({
+      background:'linear-gradient(#ee7752, #e73c7e, #23a6d5, #23d5ab)',
+      width: "100%",
+      height: "100%",
+      border: "1px solid #ee7752",
+      titleTextColor: "#7E57C2",
+      activeTabBackground: "#B39DDB",
+    })
+  });
+  
+
+  
+
+  
+
+  conversationsRequestBuilder: CometChat.ConversationsRequestBuilder = new CometChat.ConversationsRequestBuilder().setLimit(50000)
+
+  
+  
+
+  avatarStyle: AvatarStyle = new AvatarStyle({
+    backgroundColor:'#ee7752',
+    border:'2px solid red',
+    nameTextColor:'yellow',
+    backgroundSize:'15px'
+  })
+  statusIndicatorStyle: any = ({
+    height:'20px',
+    width:'20px',
+    backgroundColor: 'red'
+  });
+
+  dateStyle: DateStyle = new DateStyle({
+    width:'100%',
+    height:'100%',
+    border:'1px solid pink',
+    textColor:'green',
+    background:'#ee7752'
+  });
+
+  badgeStyle: BadgeStyle = new BadgeStyle({
+    background:'#ee7752',
+    textColor:'yellow',
+    border:'2px solid #9e54ff',
+    borderRadius:'20px'
+  });
+
+  backdropStyle: BackdropStyle = new BackdropStyle({
+    background:'#cba3ff',
+    border:'1px solid #6f00ff',
+    borderRadius:'12px',
+  });
+
+  deleteConversationDialogStyle: ConfirmDialogStyle = new ConfirmDialogStyle({
+    width: "100%",
+    height: "100%",
+    background:"blue",
+    borderRadius:"20px",
+  });
+
+  listItemStyle : ListItemStyle = new ListItemStyle({
+    width:'100%',
+    height:'100%',
+    border:'1px solid #ee7752',
+    background:'linear-gradient(#ee7752, #e73c7e, #23a6d5, #23d5ab)'
+  });
+
+
+  // customListItemView(conversation: CometChat.Conversation) {
+  //   return CustomListItemViewComponent;
+  // }
+
+  onLogin(UID?: any) {
+    CometChatUIKit.login({ uid: UID }).then(
+      (user) => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      },
+      (error) => {
+        console.log("Login failed with exception:", { error });
+      }
+    );
+  }
+}
